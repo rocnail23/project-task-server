@@ -5,14 +5,11 @@ const authMiddleware = async (req, res, next) => {
    let  token; 
    token = req.header("x-auth-token")
    if(!token){
-    return res.json({mgs: "falta el token"})
+    return res.status(404).json({mgs: "falta el token"})
    }
     
-   
 
-    
     try {
-
         let dataToken = jsw.verify(token, process.env.SECRET)
 
         req.owner = dataToken.id

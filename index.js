@@ -1,12 +1,13 @@
 const express = require("express")
 require("dotenv").config()
+const cors = require("cors")
 const connectDb = require("./config/db")
 const app = express()
 
 
 
 const PORT = process.env.PORT || 4000
-
+app.use(cors())
 connectDb()
 app.use(express.json())
 app.use("/api/user", require("./routes/user"))

@@ -2,27 +2,33 @@ const User = require("../models/UserModel")
 const jwt = require("jsonwebtoken")
 const bcryptjs = require("bcryptjs")
 const {validationResult} = require("express-validator")
+
+
+
 exports.authUser = async( req, res) => {
 
     let error = validationResult(req)
     if(!error.isEmpty()){
-        return res.json({error: error.array()})
+        return res.status(400).json({error: error.array()})
     }
 
    const {email,password} = req.body
 
 
     try {
+        
         let user;
+        console.log(user)
         user = await User.findOne({email: email})
+       
         if(!user){
-            return res.json({mgs: "correo no encotrado"})
+            return res.status(400).json({mgs: "correo no encotrado"})
         }
         
+        let isPassword = await bcryptjs.compare(password,user.password)
         
-        
-        if(!bcryptjs.compare(password,user.password)){
-            return res.json({mgs: "Las contraseñas no coinciden"})
+        if(!isPassword){
+            return res.status(400).json({mgs: "Las contraseñas no coinciden"})
         }
 
         let payload = {
@@ -36,7 +42,23 @@ exports.authUser = async( req, res) => {
        
         res.json({token})
     } catch (error) {
-        res.send(error)
+        res.status(400).json(error)
     }
+
+}
+
+
+
+exports.getAuthUser = async(req,res) => {    
+
+
+    try {
+        let user = await  User.findById(req.owner).select("-password")
+        console.log(user)
+        res.json({user})
+    } catch (error) {
+        res.json({mgs: "ha habido un error", error})
+    }
+
 
 }

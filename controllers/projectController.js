@@ -14,10 +14,10 @@ exports.createProject = async (req, res) => {
         project.owner = req.owner
         project = await project.save()
 
-        res.json({project}) 
+        res.json(project) 
     
     } catch (error) {
-        
+        res.json({error})
     }
 
 }
@@ -82,7 +82,7 @@ try {
     await Project.findByIdAndDelete(req.params.id)
     return res.json({mgs: "projecto eliminado"})
 } catch (error) {
-    
+    res.status(400).json({mgs: "hubo un error"})
 }
 
 }
